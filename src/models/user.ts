@@ -4,7 +4,8 @@ export interface IUser extends Document {
     username:string
     password:string
     organization:string
-    wepone:string[]
+    area:string
+    wepone:[Types.ObjectId]
     actions:[Types.ObjectId]
 }
 
@@ -17,8 +18,13 @@ const userSchema = new Schema<IUser>({
         type:String,
         default:""
     },
+    area:{
+        type:String,
+        default:"",
+        required:false
+    },
     wepone:{
-        type:[String],
+        type:[Types.ObjectId],
         default:[]
     },
     actions:{

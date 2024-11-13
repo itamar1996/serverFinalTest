@@ -7,6 +7,8 @@ exports.io = void 0;
 const express_1 = __importDefault(require("express"));
 require("dotenv/config");
 const db_1 = require("./config/db");
+const userController_1 = __importDefault(require("./controllers/userController"));
+const attackController_1 = __importDefault(require("./controllers/attackController"));
 const cors_1 = __importDefault(require("cors"));
 const http_1 = __importDefault(require("http"));
 const socket_io_1 = require("socket.io");
@@ -22,8 +24,8 @@ exports.io = new socket_io_1.Server(httpServer, {
 (0, db_1.conectToMongo)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
-// app.use("/api/users",userController)
-// app.use('/api/admin',adminController)
+app.use("/api/users", userController_1.default);
+app.use("/api/attack", attackController_1.default);
 // app.use('/api/votes',votesController)
 // app.use("/api/candidates", candidatesController);
 httpServer.listen(PORT, () => {

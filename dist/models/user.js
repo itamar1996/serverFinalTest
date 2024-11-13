@@ -10,8 +10,13 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         default: ""
     },
+    area: {
+        type: String,
+        default: "",
+        required: false
+    },
     wepone: {
-        type: [String],
+        type: [mongoose_1.Types.ObjectId],
         default: []
     },
     actions: {

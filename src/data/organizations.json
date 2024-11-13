@@ -1,6 +1,7 @@
 [
   {
     "name": "IDF - North",
+    "area":"North",
     "resources": [
       {
         "name": "Iron Dome",
@@ -15,6 +16,7 @@
   },
   {
     "name": "IDF - South",
+    "area":"South",
     "resources": [
       {
         "name": "Iron Dome",
@@ -29,6 +31,7 @@
   },
   {
     "name": "IDF - Center",
+    "area":"Center",
     "resources": [
       {
         "name": "Iron Dome",
@@ -43,6 +46,7 @@
   },
   {
     "name": "IDF - West Bank",
+    "area":"West Bank",
     "resources": [
       {
         "name": "Iron Dome",

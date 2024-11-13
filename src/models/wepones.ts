@@ -6,7 +6,7 @@ export interface IWepone extends Document {
     amount:number
 }
 
-const actionSchema = new Schema<IWepone>({
+const weponeSchema = new Schema<IWepone>({
     userID:{
         type:Schema.Types.ObjectId,
     }, 
@@ -20,4 +20,4 @@ const actionSchema = new Schema<IWepone>({
     }
 })
 
-export default model('Action',actionSchema)
+export default model('Wepone',weponeSchema)

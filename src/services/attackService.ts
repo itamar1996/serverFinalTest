@@ -8,6 +8,8 @@ import wepones from "../models/wepones";
 import attackDTO from "../DTO/attackDTO";
 import actions, { IAction } from "../models/actions";
 
+
+
 export const attack = async (attackDeteles:attackDTO): Promise<void| IAction> => {
     try {
       console.log(attackDeteles.wepone);

@@ -59,11 +59,11 @@
         "name": "Hezbollah",
         "resources": [
             {
-                "name": "Fajr-5",
+                "name": "Fajr5",
                 "amount": 20
             },
             {
-                "name": "Zelzal-2",
+                "name": "Zelzal2",
                 "amount": 10
             }
         ],
@@ -77,7 +77,7 @@
                 "amount": 50
             },
             {
-                "name": "M-75",
+                "name": "M75",
                 "amount": 30
             }
         ],
@@ -87,11 +87,11 @@
         "name": "IRGC",
         "resources": [
             {
-                "name": "Shahab-3",
+                "name": "Shahab3",
                 "amount": 15
             },
             {
-                "name": "Fateh-110",
+                "name": "Fateh110",
                 "amount": 25
             }
         ],
@@ -101,11 +101,11 @@
         "name": "Houthis",
         "resources": [
             {
-                "name": "Badr-1",
+                "name": "Badr1",
                 "amount": 20
             },
             {
-                "name": "Quds-1",
+                "name": "Quds1",
                 "amount": 15
             }
         ],

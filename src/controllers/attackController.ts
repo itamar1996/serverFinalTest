@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { handleAttack} from "../rotes/attackRoute";
+import { handleAttack ,handleDefence} from "../rotes/attackRoute";
 
 const router = Router() 
 
 router.post('/',handleAttack)
+router.post('/defence',handleDefence)
 
 
 export default router

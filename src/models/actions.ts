@@ -4,6 +4,7 @@ export interface IAction extends Document {
     userID:Types.ObjectId
     action:string
     status:string
+    area:string
 }
 
 const actionSchema = new Schema<IAction>({
@@ -15,6 +16,10 @@ const actionSchema = new Schema<IAction>({
         default:""
     },
     status:{
+        type:String,
+        default:""
+    },
+    area:{
         type:String,
         default:""
     }

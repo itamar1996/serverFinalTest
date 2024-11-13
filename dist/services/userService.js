@@ -68,11 +68,17 @@ const loginUser = (userDetails) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const user = yield user_1.default.findOne({ username: userDetails.username }).lean();
         if (!user) {
-            throw new Error("error");
+            return {
+                code: 403,
+                msg: "user not found"
+            };
         }
         const isPasswordMatch = yield bcrypt_1.default.compare(userDetails.password, user.password);
         if (!isPasswordMatch) {
-            throw new Error("error");
+            return {
+                code: 403,
+                msg: "password not match"
+            };
         }
         const token = yield jsonwebtoken_1.default.sign({
             user_id: user.id,

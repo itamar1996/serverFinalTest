@@ -37,11 +37,10 @@ export const attack = async (attackDeteles: attackDTO): Promise<IAction | void> 
         const action = new actions({
             userID: attackDeteles.userID,
             action: `attack by ${attackDeteles.wepone}`,
-            status: "launched"
+            status: "launched",
+            area:attackDeteles.area
         });
-        await action.save();
-        console.log(weaponSpeed);
-        
+        await action.save();        
         attackTimeout = setTimeout(async () => {
             action.status = "hit";
             await action.save();
@@ -75,6 +74,15 @@ export const interpeted = async (attackDeteles: attackDTO): Promise<IAction | vo
         await attack.save();
         console.log("Attack intercepted successfully");
         return attack;
+    } catch (error) {
+        console.log("Error during interception:", error);
+    }
+};
+
+export const getAttacks = async (area: string): Promise<IAction[] | void> => {
+    try {
+        const attacks = await actions.find({area:area});
+        return attacks;
     } catch (error) {
         console.log("Error during interception:", error);
     }

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.interpeted = exports.attack = void 0;
+exports.getAttacks = exports.interpeted = exports.attack = void 0;
 const wepones_1 = __importDefault(require("../models/wepones"));
 const actions_1 = __importDefault(require("../models/actions"));
 const weponesSpeed_1 = require("../enums/weponesSpeed");
@@ -38,10 +38,10 @@ const attack = (attackDeteles) => __awaiter(void 0, void 0, void 0, function* ()
         const action = new actions_1.default({
             userID: attackDeteles.userID,
             action: `attack by ${attackDeteles.wepone}`,
-            status: "launched"
+            status: "launched",
+            area: attackDeteles.area
         });
         yield action.save();
-        console.log(weaponSpeed);
         attackTimeout = setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             action.status = "hit";
             yield action.save();
@@ -78,3 +78,13 @@ const interpeted = (attackDeteles) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.interpeted = interpeted;
+const getAttacks = (area) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const attacks = yield actions_1.default.find({ area: area });
+        return attacks;
+    }
+    catch (error) {
+        console.log("Error during interception:", error);
+    }
+});
+exports.getAttacks = getAttacks;

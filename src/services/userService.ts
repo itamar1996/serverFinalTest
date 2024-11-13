@@ -57,11 +57,17 @@ export const loginUser = async (userDetails: loginDTO)=> {
     try {
         const user = await User.findOne({ username: userDetails.username }).lean();
         if (!user) {
-            throw new Error( "error")
+            return{                
+                code:403,
+                msg:"user not found"
+            }
         }
         const isPasswordMatch = await bcrypt.compare(userDetails.password, user.password)
         if(!isPasswordMatch){
-            throw new Error( "error")
+            return{                
+                code:403,
+                msg:"password not match"
+            }        
         }
     const token = await jwt.sign({
         user_id:user.id,

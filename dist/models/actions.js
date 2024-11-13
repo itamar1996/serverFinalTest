@@ -12,6 +12,10 @@ const actionSchema = new mongoose_1.Schema({
     status: {
         type: String,
         default: ""
+    },
+    area: {
+        type: String,
+        default: ""
     }
 });
 exports.default = (0, mongoose_1.model)('Action', actionSchema);

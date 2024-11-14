@@ -10,8 +10,7 @@ export default (req:Request,res:Response,next:NextFunction)=>{
                 err:"missing token"
             })
             return
-        }
-        
+        }        
         const payload = jwt.verify(token,process.env.JWT_SECRET!);        
         (req as any).user = payload
         next()

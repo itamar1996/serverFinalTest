@@ -33,28 +33,44 @@ export const seedData = async (): Promise<void> => {
         return
     }
 };
-export const registerUser = async (userDetails: userDTO): Promise<IUser | void> => {
+export const registerUser = async (userDetails: userDTO) => {
     try {
         const hashedPassword = await bcrypt.hash(userDetails.password, 10);
+        
+        const user = new User({
+            username: userDetails.username,
+            password: hashedPassword,
+            organization: userDetails.organization,
+            area: userDetails.area
+        });
 
-    const user = new User({
-        username: userDetails.username,
-        password: hashedPassword,
-        organization:userDetails.organization,
-        area:userDetails.area
-    });
+        const savedUser = await user.save();
 
-    const savedUser = await user.save(); 
+        const token = await jwt.sign(
+            {
+                user_id: savedUser.id,
+                username: savedUser.username,
+                organization: savedUser.organization
+            },
+            process.env.JWT_SECRET!,
+            { expiresIn: "10m" }
+        );
 
-    return savedUser;
+        return {
+            ...savedUser.toObject(),
+            token,
+            password: "**********", 
+            code: 200
+        };
 
     } catch (error) {
-        console.log("eror register",error);
-        return
+        console.log("Error in register:", error);
+        throw error;
     }
 };
+
 export const loginUser = async (userDetails: loginDTO)=> {
-    try {
+    try {        
         const user = await User.findOne({ username: userDetails.username }).lean();
         if (!user) {
             return{                
@@ -70,12 +86,11 @@ export const loginUser = async (userDetails: loginDTO)=> {
             }        
         }
     const token = await jwt.sign({
-        user_id:user.id,
+        user_id:user._id,
         username:user.username,
         organization:user.organization
-    },process.env.JWT_SECRET!,{expiresIn:"10m"})
-
-    return {...user , token , password: "**********"}; 
+    },process.env.JWT_SECRET!,{expiresIn:"10m"})    
+    return {...user , token , password: "**********",code:200}; 
     } catch (error) {
         console.log("eror register",error);
         throw error

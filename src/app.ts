@@ -1,34 +1,37 @@
-import  express  from "express";
-import 'dotenv/config'
+import express from "express";
+import cors from "cors";
+import 'dotenv/config';
 import { conectToMongo } from "./config/db";
-import userController from './controllers/userController'
-import attackController from './controllers/attackController'
-
-import cors from 'cors';
-import http from 'http'
-import {Server} from 'socket.io'
+import userController from './controllers/userController';
+import attackController from './controllers/attackController';
+import http from 'http';
+import { Server } from 'socket.io';
 import verifyUser from "./middllwhers/verifyUser";
+import { handleSocketConnection } from "./services/socketSevice";
 
+const PORT = process.env.PORT || 3000;
 
-const app = express()
-const PORT = process.env.PORT || 3000
-const httpServer = http.createServer(app)
-export const io = new Server(httpServer,{
-    cors:{
-        origin:"*",
-        methods:"*"
-    }
-})
+const app = express();
+const httpServer = http.createServer(app);
+export const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: "*",
+  },
+}); 
 
+io.on("connection", handleSocketConnection)
 
-conectToMongo()
+conectToMongo();
+
+app.use(express.json());
 app.use(cors());
-app.use(express.json())
-app.use("/api/users",userController)
-app.use("/api/attack",verifyUser, attackController)
-// app.use('/api/votes',votesController)
-// app.use("/api/candidates", candidatesController);
 
-httpServer.listen(PORT,()=>{    
-    console.log(`the server running on port ${PORT}`)    
-})
+
+
+app.use("/api/users", userController);
+app.use("/api/attack", verifyUser, attackController);
+
+httpServer.listen(PORT, () => {
+  console.log(`the server running on port ${PORT}`);
+});

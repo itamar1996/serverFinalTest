@@ -7,15 +7,19 @@ const actionSchema = new mongoose_1.Schema({
     },
     action: {
         type: String,
-        default: ""
+        default: "",
     },
     status: {
         type: String,
-        default: ""
+        default: "",
     },
     area: {
         type: String,
-        default: ""
-    }
+        default: "",
+    },
+    launchTime: {
+        type: Date,
+        default: Date.now,
+    },
 });
 exports.default = (0, mongoose_1.model)('Action', actionSchema);

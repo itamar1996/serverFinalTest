@@ -3,7 +3,7 @@ export enum WeaponSpeedEnum {
     DavidsSling = 4,
     Patriot = 5,
     Arrow = 5,
-    Qassam = 12,
+    Qassam = 60,
     M75 = 13,
     Fajr5 = 14,
     Zelzal2 = 15,

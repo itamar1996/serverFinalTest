@@ -6,9 +6,7 @@ import loginDTO from "../DTO/loginDTO";
 export const register = async(
     req:Request <any,any ,userDTO>,
     res:Response
-)=>{
-    console.log("register");
-    
+)=>{ 
     try {        
         const result = await registerUser(req.body)
         res.send(result)
@@ -38,7 +36,8 @@ export const login = async(
 )=>{
     try {                
         const result = await loginUser(req.body)
-        res.send(result)
+        console.log(result);
+        res.status(result.code!).send(result);
         return
     } catch (error) {
         console.log(error);

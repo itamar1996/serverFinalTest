@@ -56,11 +56,16 @@ const registerUser = (userDetails) => __awaiter(void 0, void 0, void 0, function
             area: userDetails.area
         });
         const savedUser = yield user.save();
-        return savedUser;
+        const token = yield jsonwebtoken_1.default.sign({
+            user_id: savedUser.id,
+            username: savedUser.username,
+            organization: savedUser.organization
+        }, process.env.JWT_SECRET, { expiresIn: "10m" });
+        return Object.assign(Object.assign({}, savedUser.toObject()), { token, password: "**********", code: 200 });
     }
     catch (error) {
-        console.log("eror register", error);
-        return;
+        console.log("Error in register:", error);
+        throw error;
     }
 });
 exports.registerUser = registerUser;
@@ -81,11 +86,11 @@ const loginUser = (userDetails) => __awaiter(void 0, void 0, void 0, function* (
             };
         }
         const token = yield jsonwebtoken_1.default.sign({
-            user_id: user.id,
+            user_id: user._id,
             username: user.username,
             organization: user.organization
         }, process.env.JWT_SECRET, { expiresIn: "10m" });
-        return Object.assign(Object.assign({}, user), { token, password: "**********" });
+        return Object.assign(Object.assign({}, user), { token, password: "**********", code: 200 });
     }
     catch (error) {
         console.log("eror register", error);

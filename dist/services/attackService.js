@@ -12,12 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAttacks = exports.interpeted = exports.attack = void 0;
+exports.getWepones = exports.getAttacksById = exports.getAttacks = exports.intercepted = exports.attack = void 0;
 const wepones_1 = __importDefault(require("../models/wepones"));
 const actions_1 = __importDefault(require("../models/actions"));
 const weponesSpeed_1 = require("../enums/weponesSpeed");
-let attackTimeout = null;
-const attack = (attackDeteles) => __awaiter(void 0, void 0, void 0, function* () {
+const missiles_json_1 = __importDefault(require("../data/missiles.json"));
+const app_1 = require("../app");
+let attackTimeouts = {};
+const attack = (attackDeteles, userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const weaponName = attackDeteles.wepone;
         const weaponSpeed = weponesSpeed_1.WeaponSpeedEnum[weaponName];
@@ -27,7 +29,7 @@ const attack = (attackDeteles) => __awaiter(void 0, void 0, void 0, function* ()
         }
         const wepone = yield wepones_1.default.findOne({
             wepone: attackDeteles.wepone,
-            userID: attackDeteles.userID
+            userID: userId,
         });
         if (!wepone || wepone.amount === 0) {
             console.log("Weapon not found or amount is 0");
@@ -36,17 +38,18 @@ const attack = (attackDeteles) => __awaiter(void 0, void 0, void 0, function* ()
         wepone.amount--;
         yield wepone.save();
         const action = new actions_1.default({
-            userID: attackDeteles.userID,
-            action: `attack by ${attackDeteles.wepone}`,
+            userID: userId,
+            action: attackDeteles.wepone,
             status: "launched",
-            area: attackDeteles.area
+            area: attackDeteles.area,
         });
         yield action.save();
-        attackTimeout = setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+        attackTimeouts[action._id.toString()] = setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             action.status = "hit";
             yield action.save();
             console.log("'hit'");
         }), weaponSpeed * 1000);
+        app_1.io.emit("newAttack");
         console.log("Attack successful");
         return action;
     }
@@ -55,36 +58,100 @@ const attack = (attackDeteles) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.attack = attack;
-const interpeted = (attackDeteles) => __awaiter(void 0, void 0, void 0, function* () {
+const intercepted = (attackDeteles, userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const attackId = "67349f151341dd9b7c35a26c";
-        const attack = yield actions_1.default.findOne({});
-        console.log(attack);
-        if (!attack || attack.status === 'hit') {
+        const attack = yield actions_1.default.findById(attackDeteles.attackID);
+        if (!attack || attack.status === "hit") {
             console.log("Attack not found or already hit");
             return;
         }
-        if (attackTimeout) {
-            clearTimeout(attackTimeout);
-            attackTimeout = null;
+        const wepone = yield wepones_1.default.findOne({
+            userID: userId,
+            wepone: attackDeteles.wepone,
+        });
+        console.log(attackDeteles);
+        if (wepone) {
+            console.log(wepone);
+            if (wepone.amount <= 0) {
+                console.log("No weapons left to intercept");
+                return;
+            }
+            console.log(wepone);
+            wepone.amount -= 1;
+            yield wepone.save();
         }
-        attack.status = "interpeted";
+        if (attackTimeouts[attack._id.toString()]) {
+            clearTimeout(attackTimeouts[attack._id.toString()]);
+            attackTimeouts[attack._id.toString()] = null;
+        }
+        attack.status = "intercepted";
         yield attack.save();
         console.log("Attack intercepted successfully");
+        app_1.io.emit("intersepted");
         return attack;
     }
     catch (error) {
         console.log("Error during interception:", error);
     }
 });
-exports.interpeted = interpeted;
-const getAttacks = (area) => __awaiter(void 0, void 0, void 0, function* () {
+exports.intercepted = intercepted;
+const getAttacks = (area, userid) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const attacks = yield actions_1.default.find({ area: area });
-        return attacks;
+        const userDefenses = yield (0, exports.getWepones)(userid);
+        if (!userDefenses) {
+            return [];
+        }
+        const allAttacks = yield actions_1.default.find({ area: area });
+        const filteredAttacks = [];
+        const processedAttacks = allAttacks.filter((attack) => {
+            return attack.status === 'hit' || attack.status === 'intercepted';
+        });
+        for (const attack of processedAttacks) {
+            filteredAttacks.push({
+                _id: attack._id,
+                action: attack.action,
+                area: attack.area,
+                isIntersptedable: false,
+                status: attack.status,
+            });
+        }
+        for (const attack of allAttacks) {
+            if (attack.status !== 'hit' && attack.status !== 'intercepted') {
+                const canBeIntercepted = userDefenses.some((defense) => missiles_json_1.default.find((defenseData) => defenseData.name === defense.wepone &&
+                    defenseData.intercepts.includes(attack.action)));
+                filteredAttacks.push({
+                    _id: attack._id,
+                    action: attack.action,
+                    area: attack.area,
+                    isIntersptedable: canBeIntercepted,
+                    status: attack.status,
+                });
+            }
+        }
+        return filteredAttacks;
     }
     catch (error) {
         console.log("Error during interception:", error);
     }
 });
 exports.getAttacks = getAttacks;
+const getAttacksById = (user_id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const attacks = yield actions_1.default.find({ userID: user_id });
+        return attacks;
+    }
+    catch (error) {
+        console.log("Error during interception:", error);
+    }
+});
+exports.getAttacksById = getAttacksById;
+const getWepones = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const weponesList = yield wepones_1.default.find({ userID: userId });
+        return weponesList;
+    }
+    catch (error) {
+        console.log("Error during interception:", error);
+    }
+});
+exports.getWepones = getWepones;

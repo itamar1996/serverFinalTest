@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.login = exports.seed = exports.register = void 0;
 const userService_1 = require("../services/userService");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("register");
     try {
         const result = yield (0, userService_1.registerUser)(req.body);
         res.send(result);
@@ -37,7 +36,8 @@ exports.seed = seed;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield (0, userService_1.loginUser)(req.body);
-        res.send(result);
+        console.log(result);
+        res.status(result.code).send(result);
         return;
     }
     catch (error) {

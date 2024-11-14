@@ -7,7 +7,7 @@ var WeaponSpeedEnum;
     WeaponSpeedEnum[WeaponSpeedEnum["DavidsSling"] = 4] = "DavidsSling";
     WeaponSpeedEnum[WeaponSpeedEnum["Patriot"] = 5] = "Patriot";
     WeaponSpeedEnum[WeaponSpeedEnum["Arrow"] = 5] = "Arrow";
-    WeaponSpeedEnum[WeaponSpeedEnum["Qassam"] = 12] = "Qassam";
+    WeaponSpeedEnum[WeaponSpeedEnum["Qassam"] = 60] = "Qassam";
     WeaponSpeedEnum[WeaponSpeedEnum["M75"] = 13] = "M75";
     WeaponSpeedEnum[WeaponSpeedEnum["Fajr5"] = 14] = "Fajr5";
     WeaponSpeedEnum[WeaponSpeedEnum["Zelzal2"] = 15] = "Zelzal2";
